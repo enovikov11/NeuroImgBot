@@ -1,10 +1,28 @@
 const express = require('express'), bodyParser = require('body-parser'),
     secrets = require('../secrets.json'),
-    {api, sendMessage, setWebhook, sendPhotosChained} = require('./telegram'),
+    {sendMessage, setWebhook} = require('./telegram'),
     {parseRequest} = require('./query'),
     app = express();
 
 app.use(bodyParser.json());
+
+let tasks = [], triggerLongpoll = () => {
+};
+
+// Supports only 1 worker
+app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
+    if (tasks.length) {
+        res.json(tasks.shift());
+        return;
+    }
+
+    triggerLongpoll = function () {
+        try {
+            res.json(null);
+        } catch (e) {
+        }
+    }
+});
 
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ok: true});
@@ -22,16 +40,17 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
             return;
         }
 
-        const stubPhotos = await sendPhotosChained({
-            photos: new Array(parsedRequest.count).fill('./preloader.jpg'),
+        const {message_id: processingMessageId} = await sendMessage({
             chatId,
-            replyToMessageid
+            text: `Processing`,
+            replyToMessageid,
+            disableNotification: true
         });
 
         const task = {
             ...parsedRequest,
             chatId,
-            stubPhotoMessages: stubPhotos.map(message => message.message_id)
+            processingMessageId
         };
 
         if (message?.photo) {
@@ -39,7 +58,8 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
             task.requestPhoto = {fileId, fileUniqueId};
         }
 
-        console.log(task);
+        tasks.push(task);
+        triggerLongpoll();
     } catch (e) {
         console.error(e);
     }

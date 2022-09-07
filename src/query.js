@@ -12,12 +12,12 @@ function parseRequest(request) {
     };
 
     const [, count] = request.match(/\bcount=(\d+)\b/) || [];
-    if(typeof count === 'string' && +count > 0 && +count < 9) {
+    if(typeof count === 'string' && 0 < +count && +count < 9) {
         params.count = +count;
     }
 
     const [, strength] = request.match(/\bstrength=(\d+\.\d+)\b/) || [];
-    if(typeof strength === 'string' && +strength >= 0 && +strength <= 1) {
+    if(typeof strength === 'string' && 0 <= +strength && +strength <= 1) {
         params.strength = +strength;
     }
 
@@ -27,12 +27,12 @@ function parseRequest(request) {
     }
 
     const [, scale] = request.match(/\bscale=(\d+(\.\d+)?)\b/) || [];
-    if(typeof scale === 'string' && +scale >= 1 && +scale <= 10) {
+    if(typeof scale === 'string' && 2 <= +scale && +scale <= 20) {
         params.scale = +scale;
     }
 
     const [, steps] = request.match(/\bsteps=(\d+)\b/) || [];
-    if(typeof steps === 'string' && +steps >= 20 && +steps <= 400) {
+    if(typeof steps === 'string' && 20 <= +steps && +steps <= 400) {
         params.steps = +steps;
     }
 
@@ -43,6 +43,10 @@ function parseRequest(request) {
         .replace(/[ ]+/g, ' ')
         .replace(/^ /, '')
         .replace(/ $/, '');
+
+    params.origRequest = request
+        .replace(/@[a-z]+bot/i, '')
+        .replace(/[ ]+/g, ' ');
 
     return params;
 }
