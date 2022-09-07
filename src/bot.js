@@ -1,18 +1,35 @@
-const express = require('express'), bodyParser = require('body-parser'),
-    secrets = require('../secrets.json'),
-    {sendMessage, setWebhook} = require('./telegram'),
-    {parseRequest} = require('./query'),
+const express = require('express'), bodyParser = require('body-parser'), secrets = require('../secrets.json'),
+    {sendMessage, setWebhook} = require('./telegram'), {parseRequest} = require('./query'),
+    {startWorker, stopWorker} = require('./yandex-cloud'),
     app = express();
 
 app.use(bodyParser.json());
 
 let tasks = [], triggerLongpoll = () => {
-};
+}, shutdownTimer = null, workersPromise = Promise.resolve();
+
+const MAX_IDLE = 10 * 60 * 1000, MAX_TASK = 3 * 60 * 1000;
+
+function tasksChanged() {
+    const wait = MAX_IDLE + (tasks.length + 1) * MAX_TASK;
+
+    if (shutdownTimer === null) {
+        workersPromise.then(startWorker).catch(console.error);
+    } else {
+        clearTimeout(shutdownTimer);
+    }
+
+    shutdownTimer = setTimeout(() => {
+        workersPromise.then(stopWorker).catch(console.error);
+        shutdownTimer = null;
+    }, wait);
+}
 
 // Supports only 1 worker
 app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
         res.json(tasks.shift());
+        tasksChanged();
         return;
     }
 
@@ -27,8 +44,7 @@ app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ok: true});
     const update = req.body, message = update?.message, chatId = message?.chat?.id,
-        request = message?.text || message?.caption, replyToMessageid = message?.message_id,
-        parsedRequest = parseRequest(request);
+        request = message?.text || message?.caption, parsedRequest = parseRequest(request);
 
     try {
         if (!secrets.ALLOWED_GUIDS.includes(chatId)) {
@@ -40,17 +56,9 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
             return;
         }
 
-        const {message_id: processingMessageId} = await sendMessage({
-            chatId,
-            text: `Processing`,
-            replyToMessageid,
-            disableNotification: true
-        });
-
         const task = {
             ...parsedRequest,
-            chatId,
-            processingMessageId
+            chatId
         };
 
         if (message?.photo) {
@@ -60,6 +68,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
 
         tasks.push(task);
         triggerLongpoll();
+        tasksChanged();
     } catch (e) {
         console.error(e);
     }

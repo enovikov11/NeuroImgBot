@@ -1,0 +1,5 @@
+{
+  "events": {
+    "restart": "yc compute instance stop stbldffsn-worker"
+  }
+}

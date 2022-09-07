@@ -1,7 +1,6 @@
 const fetch = require('node-fetch'), secrets = require('../secrets.json');
 const botBase = `https://api.telegram.org/bot${secrets.TELEGRAM_API_KEY}/`;
 
-
 async function apiRaw({method, body, headers}) {
     await new Promise(res => setTimeout(res, 100));
 
