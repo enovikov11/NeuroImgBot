@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --config nodemon.json ./src/bot.js"
+    "bot": "nodemon --config ./bot/nodemon.json ./bot/index.js"
   },
   "keywords": [],
   "author": "",
