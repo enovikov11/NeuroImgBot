@@ -5,17 +5,16 @@ After=network.target
 
 [Service]
 Type=Simple
-ExecStart=/home/enovikov11/.nvm/versions/node/v16.17.0/bin/npm run worker
+ExecStart=/home/enovikov11/anaconda3/bin/python3 worker/main.py
 WorkingDirectory=/home/enovikov11/NeuroImgBot
+Restart=Always
 
 User=enovikov11
 Group=enovikov11
 
-Environment=NVM_INC=/home/enovikov11/.nvm/versions/node/v16.17.0/include/node
-Environment=NVM_DIR=/home/enovikov11/.nvm
 Environment=CONDA_EXE=/home/enovikov11/anaconda3/bin/conda
 Environment=CONDA_PREFIX=/home/enovikov11/anaconda3/envs/neuroimgbot
-Environment=PATH=/home/enovikov11/.nvm/versions/node/v16.17.0/bin:/home/enovikov11/anaconda3/envs/neuroimgbot/bin:/home/enovikov11/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+Environment=PATH=/home/enovikov11/anaconda3/envs/neuroimgbot/bin:/home/enovikov11/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 
 [Install]
 WantedBy=multi-user.target
