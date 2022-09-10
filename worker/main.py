@@ -4,6 +4,8 @@ import requests
 import json
 from io import BytesIO
 from PIL import Image
+import time
+import os
 
 
 with open('./secrets.json') as secrets_file:
@@ -14,10 +16,14 @@ img2img = None
 
 def telegram(method, data = None, files = None):
     response = requests.post(f"https://api.telegram.org/bot{secrets['TELEGRAM_API_KEY']}/{method}", data = data, files = files)
-    return json.loads(response.text)
+    return json.loads(response.text)['result']
 
 def delete_message(chat_id, message_id):
     telegram("deleteMessage", {'chat_id': chat_id, 'message_id': message_id})
+
+def send_message(chat_id, text, reply_to_message_id):
+    result_json = telegram("sendMessage", {'chat_id': chat_id, 'text': text, 'reply_to_message_id': reply_to_message_id, 'disable_notification': True})
+    return result_json['message_id']
 
 def send_photos(chat_id, images, caption, reply_to_message_id):
     if len(images) == 1:
@@ -39,7 +45,7 @@ def send_photos(chat_id, images, caption, reply_to_message_id):
 
 def get_photo(file_id, file_unique_id):
     file_json = telegram("getFile", {'file_id': file_id, 'file_unique_id': file_unique_id})
-    file_body = requests.get(f"https://api.telegram.org/file/bot{secrets['TELEGRAM_API_KEY']}/{file_json['result']['file_path']}")
+    file_body = requests.get(f"https://api.telegram.org/file/bot{secrets['TELEGRAM_API_KEY']}/{file_json['file_path']}")
     return Image.open(BytesIO(file_body.content))
 
 def process(text):
@@ -50,6 +56,9 @@ def process(text):
     task = json.loads(text)
     if task is None:
         return
+    
+    delete_message(task["chatId"], task["enqueuedMessageId"])
+    processing_message = send_message(task["chatId"], 'Processing', task["messageId"])
     
     is_image = "requestPhoto" in task
 
@@ -82,9 +91,15 @@ def process(text):
             images.append(byte_io)
 
     send_photos(chat_id = task["chatId"], images = images, caption = task["origRequest"], reply_to_message_id = task["messageId"])    
-    delete_message(task["chatId"], task["enqueuedMessageId"])
+    delete_message(task["chatId"], processing_message)
+
+last_active_at = time.time()
 
 while True:
+    if last_active_at + 7 * 60 < time.time():
+        os.system("shutdown now -h")
+
     response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll")
     if response.status_code == 200:
         process(response.text)
+        last_active_at = time.time()
