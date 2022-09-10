@@ -25,7 +25,7 @@ function parseRequest(requestText, hasPhoto) {
 
     return {
         count, strength, scale, steps, request,
-        origRequest: `${request}\ncount=${count}${hasPhoto ? ('\nstrength=' + strength) : ''}\nscale=${scale}\nsteps=${steps}`
+        origRequest: `${request}\ncount=${count}${hasPhoto ? (' strength=' + strength) : ''} scale=${scale} steps=${steps}`
     };
 }
 
