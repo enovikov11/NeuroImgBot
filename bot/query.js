@@ -1,4 +1,4 @@
-function parseRequest(requestText) {
+function parseRequest(requestText, hasPhoto) {
     if (!requestText || !/@neuroimgbot/i.test(requestText)) {
         return null;
     }
@@ -25,7 +25,7 @@ function parseRequest(requestText) {
 
     return {
         count, strength, scale, steps, request,
-        origRequest: `${request}\ncount=${count}\nstrength=${strength}\nscale=${scale}\nsteps=${steps}`
+        origRequest: `${request}\ncount=${count}${hasPhoto ? ('\nstrength=' + strength) : ''}\nscale=${scale}\nsteps=${steps}`
     };
 }
 

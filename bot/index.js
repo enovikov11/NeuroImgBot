@@ -19,7 +19,7 @@ app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ ok: true });
     const update = req.body, message = update?.message, chatId = message?.chat?.id, messageId = message?.message_id,
-        request = message?.text || message?.caption, parsedRequest = parseRequest(request);
+        request = message?.text || message?.caption, photo = message?.photo, parsedRequest = parseRequest(request, Boolean(photo));
 
     console.log(update);
 
@@ -39,8 +39,8 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
             messageId
         };
 
-        if (message?.photo) {
-            const { file_id: fileId, file_unique_id: fileUniqueId } = message?.photo[message?.photo.length - 1];
+        if (photo) {
+            const { file_id: fileId, file_unique_id: fileUniqueId } = photo[photo.length - 1];
             task.requestPhoto = { fileId, fileUniqueId };
         }
 
