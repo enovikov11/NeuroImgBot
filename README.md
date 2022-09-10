@@ -19,6 +19,7 @@
 
 ### Manager start
 - `cd NeuroImgBot`
+- `npm run bot`
 
 ### Worker setup
 - `curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash`

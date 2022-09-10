@@ -40,7 +40,8 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
 
         const task = {
             ...parsedRequest,
-            chatId
+            chatId,
+            messageId
         };
 
         if (message?.photo) {

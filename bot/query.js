@@ -40,7 +40,9 @@ function parseRequest(request) {
 
     params.origRequest = request
         .replace(/@[a-z]+bot/i, '')
-        .replace(/[ ]+/g, ' ');
+        .replace(/[ ]+/g, ' ')
+        .replace(/^ /, '')
+        .replace(/ $/, '');
 
     return params;
 }
