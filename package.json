@@ -7,7 +7,7 @@
   "scripts": {
     "bot": "nodemon --config ./bot/nodemon.json ./bot/index.js",
     "enable-nsfw": "node ./enable-nsfw.js",
-    "worker": "python worker/main.py"
+    "worker": "nodemon --exec python worker/main.py"
   },
   "keywords": [],
   "author": "",

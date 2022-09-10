@@ -1,0 +1,20 @@
+[Unit]
+Description=NeuroImgBot bot
+After=syslog.target
+After=network.target
+After=nginx.service
+
+[Service]
+Type=Simple
+ExecStart=/home/enovikov11/.nvm/versions/node/v16.17.0/bin/npm run bot
+WorkingDirectory=/home/enovikov11/NeuroImgBot
+
+User=enovikov11
+Group=enovikov11
+
+Environment=NVM_INC=/home/enovikov11/.nvm/versions/node/v16.17.0/include/node
+Environment=NVM_DIR=/home/enovikov11/.nvm
+Environment=PATH=/home/enovikov11/.nvm/versions/node/v16.17.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+[Install]
+WantedBy=multi-user.target

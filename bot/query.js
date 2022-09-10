@@ -26,13 +26,13 @@ function parseRequest(request) {
     }
 
     const [, steps] = request.match(/\bsteps=(\d+)\b/) || [];
-    if (typeof steps === 'string' && 20 <= +steps && +steps <= 400) {
+    if (typeof steps === 'string' && 20 <= +steps && +steps <= 500) {
         params.steps = +steps;
     }
 
     params.request = request
         .replace(/@[a-z]+bot/i, '')
-        .replace(/\b\w+=\w+\b/g, '')
+        .replace(/\b\w+=[\w.]+\b/g, '')
         .replace(/\n/g, '')
         .replace(/[ ]+/g, ' ')
         .replace(/^ /, '')

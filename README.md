@@ -26,9 +26,17 @@
 - `wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh`
 - `sudo apt install tmux git libice6 libsm6 libxt6 libxrender1 libfontconfig1 libcups2`
 - `conda env create -f environment.yaml`
+- `npm install`
 - `npm run enable-nsfw`
+- `sudo cp /home/enovikov11/NeuroImgBot/systemd-examples/neuroimg-worker.service /etc/systemd/system`
+- `sudo systemctl enable neuroimg-worker.service`
+- `sudo systemctl start neuroimg-worker.service`
 
 ### Worker start
 - `cd NeuroImgBot`
 - `conda activate neuroimgbot`
 - `npm run worker`
+
+### Worker logs
+- `sudo journalctl -u neuroimg-worker.service`
+- `sudo systemctl status neuroimg-worker.service`
