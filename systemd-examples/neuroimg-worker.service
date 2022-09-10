@@ -4,10 +4,10 @@ After=syslog.target
 After=network.target
 
 [Service]
-Type=Simple
-ExecStart=/home/enovikov11/anaconda3/bin/python3 worker/main.py
+Type=simple
+ExecStart=/home/enovikov11/anaconda3/envs/neuroimgbot/bin/python3.8 /home/enovikov11/NeuroImgBot/worker/main.py
 WorkingDirectory=/home/enovikov11/NeuroImgBot
-Restart=Always
+Restart=always
 
 User=enovikov11
 Group=enovikov11

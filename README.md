@@ -38,5 +38,5 @@
 - `npm run worker`
 
 ### Worker logs
-- `sudo journalctl -u neuroimg-worker.service`
+- `sudo journalctl -u neuroimg-worker.service -f`
 - `sudo systemctl status neuroimg-worker.service`

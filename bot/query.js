@@ -1,5 +1,5 @@
 function parseRequest(request) {
-    if (!request || (!/^[A-Za-z0-9 ,._-]+$/.test(request) && !/@[a-z]+bot/i.test(request))) {
+    if (!request || !/@[a-z]+bot/i.test(request)) {
         return null;
     }
 
