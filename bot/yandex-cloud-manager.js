@@ -1,6 +1,6 @@
 const { promisify } = require('node:util'), exec = promisify(require('node:child_process').exec);
 
-const CHECKING_INTERVAL = 2 * 60 * 1000, WATCHDOG_INTERVAL = 12 * CHECKING_INTERVAL,
+const CHECKING_INTERVAL = 2 * 60 * 1000, WATCHDOG_INTERVAL = 12 * 60 * 1000,
     CIRCLE_BUFFER_SIZE = 24 * 60 / 2, MAX_ACTIVE_ALLOWED = CIRCLE_BUFFER_SIZE / 8,
     WORKER_NAME = 'neuroimgbot-worker', execConfig = { timeout: 5 * 60 * 1000 };
 

@@ -9,8 +9,8 @@ from PIL import Image
 with open('./secrets.json') as secrets_file:
     secrets = json.load(secrets_file)
 
-txt2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
-img2img = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
+txt2img = None
+img2img = None
 
 def telegram(method, data = None, files = None):
     response = requests.post(f"https://api.telegram.org/bot{secrets['TELEGRAM_API_KEY']}/{method}", data = data, files = files)
@@ -53,8 +53,18 @@ def process(text):
     
     is_image = "requestPhoto" in task
 
-    txt2img.to("cpu" if is_image else "cuda")
-    img2img = img2img.to("cuda" if is_image else "cpu")
+    if is_image:
+        if not img2img:
+            img2img = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
+    else:
+        if not txt2img:
+            txt2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
+
+    if txt2img:
+        txt2img.to("cpu" if is_image else "cuda")
+    
+    if img2img:
+        img2img.to("cuda" if is_image else "cpu")
 
     images = []
 
