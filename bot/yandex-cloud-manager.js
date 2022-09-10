@@ -1,7 +1,7 @@
 const { promisify } = require('node:util'), exec = promisify(require('node:child_process').exec);
 
-const CHECKING_INTERVAL = 60 * 1000, WATCHDOG_INTERVAL = 7 * CHECKING_INTERVAL,
-    CIRCLE_BUFFER_SIZE = 24 * 60, MAX_ACTIVE_ALLOWED = CIRCLE_BUFFER_SIZE / 8,
+const CHECKING_INTERVAL = 2 * 60 * 1000, WATCHDOG_INTERVAL = 12 * CHECKING_INTERVAL,
+    CIRCLE_BUFFER_SIZE = 24 * 60 / 2, MAX_ACTIVE_ALLOWED = CIRCLE_BUFFER_SIZE / 8,
     WORKER_NAME = 'neuroimgbot-worker', execConfig = { timeout: 5 * 60 * 1000 };
 
 let lastActiveAt = 0, activityCircleBuffer = new Array(CIRCLE_BUFFER_SIZE).fill(false), activityI = 0;
@@ -39,18 +39,13 @@ function clearWatchdog() {
     lastActiveAt = Date.now();
 }
 
-async function ensureRunning() {
+function ensureRunning() {
     if (isQuotaExceeded()) {
         return;
     }
 
     lastActiveAt = Date.now();
-
-    const status = await getStatus();
-
-    if (status === 'STOPPED') {
-        await start();
-    }
+    start().catch(() => null);
 }
 
 setInterval(() => check().catch(console.error), CHECKING_INTERVAL);

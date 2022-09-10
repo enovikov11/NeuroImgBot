@@ -54,7 +54,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
 
         tasks.push(task);
         triggerLongpoll();
-        ensureRunning().catch(console.error);
+        ensureRunning();
     } catch (e) {
         console.error(e);
     }
