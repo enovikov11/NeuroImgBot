@@ -51,4 +51,4 @@ function parseRequest(request) {
     return params;
 }
 
-module.exports = {parseRequest};
+module.exports = { parseRequest };
