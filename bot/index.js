@@ -4,10 +4,8 @@ const express = require('express'), bodyParser = require('body-parser'), secrets
 
 app.use(bodyParser.json());
 
-let tasks = [], triggerLongpoll = () => {
-};
+let tasks = [], longpollTriggers = [];
 
-// Supports only 1 worker
 app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
         res.json(tasks.shift());
@@ -15,18 +13,15 @@ app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
         return;
     }
 
-    triggerLongpoll = function () {
-        try {
-            res.json(null);
-        } catch (e) {
-        }
-    }
+    longpollTriggers.push(() => { try { res.json(null) } catch (e) { } });
 });
 
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ ok: true });
     const update = req.body, message = update?.message, chatId = message?.chat?.id, messageId = message?.message_id,
         request = message?.text || message?.caption, parsedRequest = parseRequest(request);
+
+    console.log(update);
 
     try {
         if (!secrets.ALLOWED_GUIDS.includes(chatId)) {
@@ -53,7 +48,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
         task.enqueuedMessageId = enqueuedMessageId;
 
         tasks.push(task);
-        triggerLongpoll();
+        longpollTriggers.forEach(trigger => trigger());
         ensureRunning();
     } catch (e) {
         console.error(e);
@@ -61,7 +56,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
 });
 
 async function main() {
-    await setWebhook({ url: `${secrets.SERVER_BASE}${secrets.SERVER_SECRET}/tg-callback`, allowed_updates: ['message'] });
+    await setWebhook({ url: `${secrets.SERVER_BASE}${secrets.SERVER_SECRET}/tg-callback`, allowed_updates: ['message', 'edited_message'] });
     app.listen(8000);
 }
 
