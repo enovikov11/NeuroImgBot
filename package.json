@@ -5,7 +5,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bot": "nodemon --config ./bot/nodemon.json ./bot/index.js"
+    "bot": "nodemon --config ./bot/nodemon.json ./bot/index.js",
+    "enable-nsfw": "node ./enable-nsfw.js",
+    "worker": "python worker/main.py"
   },
   "keywords": [],
   "author": "",

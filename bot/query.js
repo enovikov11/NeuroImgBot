@@ -6,7 +6,6 @@ function parseRequest(request) {
     const params = {
         count: 5,
         strength: 0.2,
-        sampler: 'plms',
         scale: 7.5,
         steps: 50
     };
@@ -19,11 +18,6 @@ function parseRequest(request) {
     const [, strength] = request.match(/\bstrength=(\d+\.\d+)\b/) || [];
     if (typeof strength === 'string' && 0 <= +strength && +strength <= 1) {
         params.strength = +strength;
-    }
-
-    const [, sampler] = request.match(/\bsampler=(plms|ddim|dpm)\b/) || [];
-    if (typeof sampler === 'string') {
-        params.sampler = sampler;
     }
 
     const [, scale] = request.match(/\bscale=(\d+(\.\d+)?)\b/) || [];
