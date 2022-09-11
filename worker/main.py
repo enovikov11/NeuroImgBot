@@ -103,7 +103,7 @@ os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk
 print("sshfs mounted" + str(time.time()))
 
 while True:
-    response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll", timeout=120)
+    response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll", timeout=60)
     if response.status_code == 200:
         print("Processing request " + str(time.time()) + " " + response.text)
         process(response.text)
