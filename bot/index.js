@@ -25,7 +25,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     const update = req.body, message = update?.message, chatId = message?.chat?.id, messageId = message?.message_id,
         request = message?.text || message?.caption, photo = message?.photo, parsedRequest = parseRequest(request, Boolean(photo), Boolean(message?.reply_to_message));
 
-    console.log(update);
+    console.log(JSON.stringify(update));
 
     try {
         if (!secrets.ALLOWED_GUIDS.includes(chatId)) {
