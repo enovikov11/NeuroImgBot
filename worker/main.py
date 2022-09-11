@@ -1,5 +1,10 @@
 import time
 import os
+import json
+
+
+with open('./secrets.json') as secrets_file:
+    secrets = json.load(secrets_file)
 
 print("Script started " + str(time.time()))
 os.system("git pull")
@@ -7,16 +12,13 @@ print("Git pulled " + str(time.time()))
 os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers")
 print("sshfs mounted " + str(time.time()))
 
+
 from torch import autocast
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
 import requests
-import json
 from io import BytesIO
 from PIL import Image
 
-
-with open('./secrets.json') as secrets_file:
-    secrets = json.load(secrets_file)
 
 txt2img = None
 img2img = None
