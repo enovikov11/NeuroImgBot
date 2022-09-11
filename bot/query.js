@@ -1,5 +1,5 @@
-function parseRequest(requestText, hasPhoto) {
-    if (!requestText || !/@neuroimgbot/i.test(requestText)) {
+function parseRequest(requestText, hasPhoto, isReply) {
+    if (!requestText || (!/@neuroimgbot/i.test(requestText) && !isReply)) {
         return null;
     }
 

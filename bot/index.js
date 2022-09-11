@@ -23,7 +23,7 @@ app.get(`/${secrets.SERVER_SECRET}/notify-stopped`, async (req, res) => { res.se
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ ok: true });
     const update = req.body, message = update?.message, chatId = message?.chat?.id, messageId = message?.message_id,
-        request = message?.text || message?.caption, photo = message?.photo, parsedRequest = parseRequest(request, Boolean(photo));
+        request = message?.text || message?.caption, photo = message?.photo, parsedRequest = parseRequest(request, Boolean(photo), Boolean(message?.reply_to_message));
 
     console.log(update);
 
