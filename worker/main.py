@@ -57,9 +57,6 @@ def process(text):
     if task is None:
         return
     
-    delete_message(task["chatId"], task["enqueuedMessageId"])
-    processing_message = send_message(task["chatId"], 'Processing', task["messageId"])
-    
     is_image = "requestPhoto" in task
 
     if is_image:
@@ -68,6 +65,9 @@ def process(text):
     else:
         if not txt2img:
             txt2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
+
+    delete_message(task["chatId"], task["enqueuedMessageId"])
+    processing_message = send_message(task["chatId"], 'Processing', task["messageId"])
 
     if txt2img:
         txt2img.to("cpu" if is_image else "cuda")
