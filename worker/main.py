@@ -97,7 +97,7 @@ last_active_at = time.time()
 
 while True:
     if last_active_at + 7 * 60 < time.time():
-        os.system("shutdown now -h")
+        os.system("sudo shutdown now -h")
 
     response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll")
     if response.status_code == 200:
