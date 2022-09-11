@@ -102,3 +102,4 @@ while True:
     else:
         requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped")
         os.system("sudo shutdown now -h")
+        break
