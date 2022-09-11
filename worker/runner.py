@@ -8,6 +8,9 @@ import os
 import json
 
 
+with open('./secrets.json') as secrets_file:
+    secrets = json.load(secrets_file)
+
 txt2img = None
 img2img = None
 
@@ -116,5 +119,5 @@ except Exception as e:
     print(e)
     pass
 
-# print("Shutting down " + str(time.time()))
-# os.system("sudo shutdown now -h")
+print("Shutting down " + str(time.time()))
+os.system("sudo shutdown now -h")
