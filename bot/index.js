@@ -6,7 +6,7 @@ app.use(bodyParser.json());
 
 let tasks = [], longpollTriggers = [];
 
-app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
+app.get(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
         const task = tasks.shift();
         console.log(JSON.stringify({ timeLongpolled: Date.now(), task }));
@@ -18,9 +18,7 @@ app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     longpollTriggers.push(() => { try { res.json(null) } catch (e) { } });
 });
 
-app.post(`/${secrets.SERVER_SECRET}/notify-stopped`, async (req, res) => {
-
-});
+app.get(`/${secrets.SERVER_SECRET}/notify-stopped`, async (req, res) => { res.send('OK'); });
 
 app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     res.json({ ok: true });

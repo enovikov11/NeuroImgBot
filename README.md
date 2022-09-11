@@ -44,4 +44,5 @@
 
 ### Worker logs
 - `sudo journalctl -u neuroimg-worker.service -f`
+- `systemd-analyze critical-chain neuroimg-worker.service`
 - `sudo systemctl status neuroimg-worker.service`

@@ -1,3 +1,9 @@
+print("Script started " + str(time.time()))
+os.system("git pull")
+print("Git pulled " + str(time.time()))
+os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers")
+print("sshfs mounted " + str(time.time()))
+
 from torch import autocast
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
 import requests
@@ -98,18 +104,16 @@ def process(text):
 
     print("Processing finished " + str(time.time()))
 
-print("Script started " + str(time.time()))
-os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers")
-print("sshfs mounted " + str(time.time()))
+print("Loop started " + str(time.time()))
 
 while True:
-    response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll", timeout=60)
+    response = requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll?worker={os.environ['WORKER_ID']}", timeout=60)
     if response.status_code == 200:
         print("Processing request " + str(time.time()) + " " + response.text)
         process(response.text)
     else:
         print("Notify stopped " + str(time.time()))
-        requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped")
+        requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped?worker={os.environ['WORKER_ID']}")
         print("Shutting down " + str(time.time()))
         os.system("sudo shutdown now -h")
         break

@@ -15,6 +15,7 @@ Group=enovikov11
 Environment=CONDA_EXE=/home/enovikov11/anaconda3/bin/conda
 Environment=CONDA_PREFIX=/home/enovikov11/anaconda3/envs/neuroimgbot
 Environment=PATH=/home/enovikov11/anaconda3/envs/neuroimgbot/bin:/home/enovikov11/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+Environment=WORKER_ID=0
 
 [Install]
 WantedBy=multi-user.target
