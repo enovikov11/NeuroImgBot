@@ -1,3 +1,9 @@
+const { stringify } = require('yaml');
+
+console.yaml = function (object) {
+    console.log(stringify(object) + '\n');
+}
+
 const express = require('express'), bodyParser = require('body-parser'), secrets = require('../secrets.json'),
     { sendMessage, setWebhook } = require('./telegram'), { parseRequest } = require('./query'),
     { clearWatchdog, ensureRunning } = require('./yandex-cloud-manager'), app = express();
@@ -9,7 +15,7 @@ let tasks = [], longpollTriggers = [];
 app.get(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
         const task = tasks.shift();
-        console.log(JSON.stringify({ timeLongpolled: Date.now(), task }));
+        console.yaml({ timeLongpolled: Date.now(), task });
         res.json(task);
         clearWatchdog();
         return;
@@ -25,7 +31,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
     const update = req.body, message = update?.message, chatId = message?.chat?.id, messageId = message?.message_id,
         request = message?.text || message?.caption, photo = message?.photo, parsedRequest = parseRequest(request, Boolean(photo), Boolean(message?.reply_to_message));
 
-    console.log(JSON.stringify(update));
+    console.yaml(update);
 
     try {
         if (!secrets.ALLOWED_GUIDS.includes(chatId)) {
@@ -52,7 +58,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
         task.enqueuedMessageId = enqueuedMessageId;
 
         tasks.push(task);
-        console.log(JSON.stringify({ timeEnqueued: Date.now(), task }));
+        console.yaml({ timeEnqueued: Date.now(), task });
         longpollTriggers.forEach(trigger => trigger());
         ensureRunning();
     } catch (e) {
