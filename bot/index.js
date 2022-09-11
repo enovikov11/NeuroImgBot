@@ -9,7 +9,7 @@ let tasks = [], longpollTriggers = [];
 app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
         const task = tasks.shift();
-        console.log(JSON.stringify({ time: Date.now(), task }));
+        console.log(JSON.stringify({ timeLongpolled: Date.now(), task }));
         res.json(task);
         clearWatchdog();
         return;
@@ -54,6 +54,7 @@ app.post(`/${secrets.SERVER_SECRET}/tg-callback`, async (req, res) => {
         task.enqueuedMessageId = enqueuedMessageId;
 
         tasks.push(task);
+        console.log(JSON.stringify({ timeEnqueued: Date.now(), task }));
         longpollTriggers.forEach(trigger => trigger());
         ensureRunning();
     } catch (e) {
