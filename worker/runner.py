@@ -106,12 +106,14 @@ try:
         else:
             break
 except Exception as e:
+    print(e)
     pass
 
 print("Notify stopped " + str(time.time()))
 try:
     requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped?worker={os.environ['WORKER_ID']}", timeout=15)
 except Exception as e:
+    print(e)
     pass
 
 # print("Shutting down " + str(time.time()))
