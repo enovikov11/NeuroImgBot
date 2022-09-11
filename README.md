@@ -43,6 +43,7 @@
 - `sudo systemctl start neuroimg-worker.service`
 
 ### Worker logs
+- `sudo systemctl stop neuroimg-worker.service`
 - `sudo journalctl -u neuroimg-worker.service -f`
 - `systemd-analyze critical-chain neuroimg-worker.service`
 - `sudo systemctl status neuroimg-worker.service`

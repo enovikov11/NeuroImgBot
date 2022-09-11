@@ -1,3 +1,6 @@
+import time
+import os
+
 print("Script started " + str(time.time()))
 os.system("git pull")
 print("Git pulled " + str(time.time()))
@@ -10,8 +13,6 @@ import requests
 import json
 from io import BytesIO
 from PIL import Image
-import time
-import os
 
 
 with open('./secrets.json') as secrets_file:
