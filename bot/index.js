@@ -8,7 +8,9 @@ let tasks = [], longpollTriggers = [];
 
 app.post(`/${secrets.SERVER_SECRET}/get-task-longpoll`, async (req, res) => {
     if (tasks.length) {
-        res.json(tasks.shift());
+        const task = tasks.shift();
+        console.log(JSON.stringify({ time: Date.now(), task }));
+        res.json(task);
         clearWatchdog();
         return;
     }
