@@ -16,14 +16,14 @@ img2img = None
 
 def telegram(method, data = None, files = None):
     response = requests.post(f"https://api.telegram.org/bot{secrets['TELEGRAM_API_KEY']}/{method}", data = data, files = files)
-    return json.loads(response.text)['result']
+    return json.loads(response.text)
 
 def delete_message(chat_id, message_id):
     telegram("deleteMessage", {'chat_id': chat_id, 'message_id': message_id})
 
 def send_message(chat_id, text, reply_to_message_id):
     result_json = telegram("sendMessage", {'chat_id': chat_id, 'text': text, 'reply_to_message_id': reply_to_message_id, 'disable_notification': True})
-    return result_json['message_id']
+    return result_json['result']['message_id']
 
 def send_photos(chat_id, images, caption, reply_to_message_id):
     if len(images) == 1:
@@ -45,7 +45,7 @@ def send_photos(chat_id, images, caption, reply_to_message_id):
 
 def get_photo(file_id, file_unique_id):
     file_json = telegram("getFile", {'file_id': file_id, 'file_unique_id': file_unique_id})
-    file_body = requests.get(f"https://api.telegram.org/file/bot{secrets['TELEGRAM_API_KEY']}/{file_json['file_path']}")
+    file_body = requests.get(f"https://api.telegram.org/file/bot{secrets['TELEGRAM_API_KEY']}/{file_json['result']['file_path']}")
     return Image.open(BytesIO(file_body.content))
 
 def process(text):
@@ -102,7 +102,7 @@ print("Loop started " + str(time.time()))
 
 try:
     while True:
-        response = requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll?worker={os.environ['WORKER_ID']}", timeout=60)
+        response = requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll?worker={os.environ['WORKER_ID']}", timeout=90)
         if response.status_code == 200:
             print("Processing request " + str(time.time()) + " " + response.text)
             process(response.text)
