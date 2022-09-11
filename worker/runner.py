@@ -114,5 +114,5 @@ try:
 except Exception as e:
     pass
 
-print("Shutting down " + str(time.time()))
-os.system("sudo shutdown now -h")
+# print("Shutting down " + str(time.time()))
+# os.system("sudo shutdown now -h")
