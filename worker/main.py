@@ -65,7 +65,7 @@ def process(text):
         if not txt2img:
             txt2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
 
-    print("Model loaded" + str(time.time()))
+    print("Model loaded " + str(time.time()))
 
     delete_message(task["chatId"], task["enqueuedMessageId"])
     processing_message = send_message(task["chatId"], 'Processing', task["messageId"])
@@ -76,7 +76,7 @@ def process(text):
     if img2img:
         img2img.to("cuda" if is_image else "cpu")
 
-    print("Model loaded to gpu" + str(time.time()))
+    print("Model loaded to gpu " + str(time.time()))
 
     images = []
 
@@ -96,11 +96,11 @@ def process(text):
     send_photos(chat_id = task["chatId"], images = images, caption = task["origRequest"], reply_to_message_id = task["messageId"])    
     delete_message(task["chatId"], processing_message)
 
-    print("Processing finished" + str(time.time()))
+    print("Processing finished " + str(time.time()))
 
-print("Script started" + str(time.time()))
+print("Script started " + str(time.time()))
 os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers")
-print("sshfs mounted" + str(time.time()))
+print("sshfs mounted " + str(time.time()))
 
 while True:
     response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll", timeout=60)
@@ -108,8 +108,8 @@ while True:
         print("Processing request " + str(time.time()) + " " + response.text)
         process(response.text)
     else:
-        print("Notify stopped" + str(time.time()))
+        print("Notify stopped " + str(time.time()))
         requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped")
-        print("Shutting down" + str(time.time()))
+        print("Shutting down " + str(time.time()))
         os.system("sudo shutdown now -h")
         break
