@@ -1,5 +1,0 @@
-{
-  "events": {
-    "restart": "yc compute instance stop neuroimgbot-worker"
-  }
-}

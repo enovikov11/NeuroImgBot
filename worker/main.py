@@ -93,13 +93,12 @@ def process(text):
     send_photos(chat_id = task["chatId"], images = images, caption = task["origRequest"], reply_to_message_id = task["messageId"])    
     delete_message(task["chatId"], processing_message)
 
-last_active_at = time.time()
+os.system(f"sshfs -o reconnect {secrets['HOST']}:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers")
 
 while True:
-    if last_active_at + 7 * 60 < time.time():
-        os.system("sudo shutdown now -h")
-
     response = requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll")
     if response.status_code == 200:
         process(response.text)
-        last_active_at = time.time()
+    else:
+        requests.post(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped")
+        os.system("sudo shutdown now -h")

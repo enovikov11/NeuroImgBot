@@ -5,9 +5,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bot": "nodemon --config ./bot/nodemon.json ./bot/index.js",
+    "bot": "node ./bot/index.js;yc compute instance stop neuroimgbot-worker",
     "enable-nsfw": "node ./enable-nsfw.js",
-    "worker": "nodemon --exec python3 worker/main.py"
+    "cache-ramdisk": "sudo mount -t tmpfs -o size=6G tmpfs ~/models-ramdisk && cp -r ./models/models--CompVis--stable-diffusion-v1-4 ./models-ramdisk/"
   },
   "keywords": [],
   "author": "",

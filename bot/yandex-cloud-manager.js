@@ -40,6 +40,12 @@ function clearWatchdog() {
 }
 
 function ensureRunning() {
+    console.log(JSON.stringify({
+        used: activityCircleBuffer.filter(Boolean).length,
+        of: MAX_ACTIVE_ALLOWED,
+        period: CIRCLE_BUFFER_SIZE
+    }));
+
     if (isQuotaExceeded()) {
         return;
     }
