@@ -2,7 +2,7 @@ from torch import autocast
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
 import requests
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 import time
 import os
 import json
@@ -60,9 +60,13 @@ def process(text):
 
     if is_image:
         if not img2img:
+            if txt2img:
+                txt2img.to("cpu")
             img2img = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
     else:
         if not txt2img:
+            if img2img:
+                img2img.to("cpu")
             txt2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=True)
 
     print("Model loaded " + str(time.time()))
@@ -84,7 +88,8 @@ def process(text):
         for i in range(task["count"]):
             if is_image:
                 init_image = get_photo(task["requestPhoto"]["fileId"], task["requestPhoto"]["fileUniqueId"])
-                image = img2img(prompt = task["request"], init_image = init_image, strength = task["strength"], num_inference_steps = task["steps"], guidance_scale = task["scale"]).images[0]
+                thumb = ImageOps.fit(init_image, (512, 512), Image.ANTIALIAS)
+                image = img2img(prompt = task["request"], init_image = thumb, strength = task["strength"], num_inference_steps = task["steps"], guidance_scale = task["scale"]).images[0]
             else:
                 image = txt2img(prompt = task["request"], num_inference_steps = task["steps"], guidance_scale = task["scale"]).images[0]
             
@@ -105,19 +110,20 @@ try:
         response = requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/get-task-longpoll?worker={os.environ['WORKER_ID']}", timeout=90)
         if response.status_code == 200:
             print("Processing request " + str(time.time()) + " " + response.text)
-            process(response.text)
+            try:
+                process(response.text)
+            except Exception as e:
+                print(e)
         else:
             break
 except Exception as e:
     print(e)
-    pass
 
 print("Notify stopped " + str(time.time()))
 try:
     requests.get(f"{secrets['SERVER_BASE']}{secrets['SERVER_SECRET']}/notify-stopped?worker={os.environ['WORKER_ID']}", timeout=15)
 except Exception as e:
     print(e)
-    pass
 
 print("Shutting down " + str(time.time()))
 os.system("sudo shutdown now -h")
