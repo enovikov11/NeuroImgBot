@@ -5,8 +5,9 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStartPre=/home/enovikov11/anaconda3/envs/neuroimgbot/bin/python3.8 /home/enovikov11/NeuroImgBot/worker/pre.py
-ExecStart=/home/enovikov11/anaconda3/envs/neuroimgbot/bin/python3.8 /home/enovikov11/NeuroImgBot/worker/runner.py
+ExecStartPre=sshfs -o reconnect HOST:/home/enovikov11/models-ramdisk /home/enovikov11/.cache/huggingface/diffusers
+ExecStartPre=sshfs -o reconnect HOST:/home/enovikov11/NeuroImgBot /home/enovikov11/NeuroImgBot
+ExecStart=/home/enovikov11/anaconda3/envs/neuroimgbot/bin/python3.8 /home/enovikov11/NeuroImgBot/worker/main.py
 WorkingDirectory=/home/enovikov11/NeuroImgBot
 Restart=always
 
